@@ -15,6 +15,7 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use function method_exists;
 
 class EnumDynamicReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension, DynamicMethodReturnTypeExtension
 {
@@ -82,7 +83,7 @@ class EnumDynamicReturnTypeExtension implements DynamicStaticMethodReturnTypeExt
         StaticCall $staticCall,
         Scope $scope
     ): Type {
-        if ($staticCall->class instanceof Expr) {
+        if (!method_exists($staticCall->class, 'toString')) {
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
         $callClass = $staticCall->class->toString();
